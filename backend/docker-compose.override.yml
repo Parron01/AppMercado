@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev  # Usa o Dockerfile.dev (Hot Reload)
+    container_name: appmercado-backend-dev
+    volumes:
+      - .:/app  # Mapeia o código local para o container
+    command: air  # Usa o comando do Air para Hot Reloading
+    environment:
+      - SERVER_PORT=8080  # Configuração rápida de porta
+    ports:
+      - "8080:8080"
+    networks:
+      - appmercado-net
+
+  postgres:
+    image: postgres:14
+    container_name: appmercado-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - appmercado-net
+
+networks:
+  appmercado-net:
+
+volumes:
+  postgres_data:

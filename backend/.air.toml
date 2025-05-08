@@ -1,0 +1,8 @@
+# Configuração do Air para Hot Reloading
+root = "."
+tmp_dir = "tmp"  # O diretório temporário será o /app/tmp
+[build]
+cmd = "go build -o tmp/main cmd/server/main.go"
+bin = "tmp/main"
+include_ext = ["go"]
+exclude_dir = ["tmp", "vendor"]

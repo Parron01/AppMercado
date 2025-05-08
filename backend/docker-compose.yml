@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Produção
+    container_name: appmercado-backend
+    env_file:
+      - .env  
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - appmercado-net
+
+  postgres:
+    image: postgres:14
+    container_name: appmercado-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - appmercado-net
+
+networks:
+  appmercado-net:
+
+volumes:
+  postgres_data:
