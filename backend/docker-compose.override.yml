@@ -8,6 +8,7 @@ services:
     container_name: appmercado-backend-dev
     volumes:
       - .:/app  # Mapeia o código local para o container
+      - /app/tmp
     command: air  # Usa o comando do Air para Hot Reloading
     environment:
       - SERVER_PORT=8080  # Configuração rápida de porta

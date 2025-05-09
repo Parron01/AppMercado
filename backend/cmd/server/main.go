@@ -10,14 +10,15 @@ import (
 
 func main() {
 	// 1) Carrega configurações (porta, banco, JWT, etc.)
-	appConfig := config.Load() // Renomeado para clareza e evitar conflito com nome do pacote
+	appConfig := config.Load()
 
 	// 2) Inicializa conexão com DB (PostgreSQL via GORM)
 	database := repositories.NewPostgresConn(appConfig)
 
 	// 3) Instancia repositórios e serviços
-	userRepository := repositories.NewUserRepository(database) // Corrigido para usar NewUserRepository
-	authService := services.NewAuthService(userRepository, appConfig)
+	userRepository := repositories.NewUserRepository(database)
+	userService := services.NewUserService(userRepository)
+	authService := services.NewAuthService(userService, appConfig)
 
 	// 4) Cria Gin Engine e registra rotas/handlers
 	router := gin.Default()
