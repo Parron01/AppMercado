@@ -17,13 +17,18 @@ func main() {
 
 	// 3) Instancia repositórios e serviços
 	userRepository := repositories.NewUserRepository(database)
+	categoryRepository := repositories.NewCategoryRepository(database)
+
+	// 3) Instancia serviços
 	userService := services.NewUserService(userRepository)
 	authService := services.NewAuthService(userService, appConfig)
+	categoryService := services.NewCategoryService(categoryRepository)
 
 	// 4) Cria Gin Engine e registra rotas/handlers
 	router := gin.Default()
 	handlers.RegisterAuthRoutes(router, authService)
 	handlers.RegisterUserRoutes(router, userService, appConfig)
+	handlers.RegisterCategoryRoutes(router, categoryService, appConfig)
 
 	// 5) Inicia servidor HTTP na porta configurada
 	router.Run(":" + appConfig.ServerPort)

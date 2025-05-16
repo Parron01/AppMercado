@@ -18,7 +18,7 @@ func RegisterUserRoutes(router *gin.Engine, userService *services.UserService, a
 	userGroup := router.Group("/users")
 	{
 		// Rota para listar todos os usuários (apenas admin)
-		userGroup.GET("/", authMiddleware, func(context *gin.Context) {
+		userGroup.GET("/all", authMiddleware, func(context *gin.Context) {
 			// Pegando o role do usuário autenticado do contexto
 			userRole := context.GetString("userRole")
 
@@ -38,7 +38,7 @@ func RegisterUserRoutes(router *gin.Engine, userService *services.UserService, a
 		})
 
 		// Rota para deletar um usuário
-		userGroup.DELETE("/:id", authMiddleware, func(context *gin.Context) {
+		userGroup.DELETE("/delete/:id", authMiddleware, func(context *gin.Context) {
 			// Obtendo ID do usuário a ser deletado
 			userID, err := strconv.ParseUint(context.Param("id"), 10, 32)
 			if err != nil {
