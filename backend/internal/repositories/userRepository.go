@@ -56,3 +56,12 @@ func (repository *UserRepository) UpdateUser(user *models.User) error {
 func (repository *UserRepository) DeleteUser(id uint) error {
 	return repository.database.Delete(&models.User{}, id).Error
 }
+
+// GetAllUsers retorna todos os usuários cadastrados no sistema
+func (repository *UserRepository) GetAllUsers() ([]*models.User, error) {
+	var users []*models.User
+	if err := repository.database.Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
+}

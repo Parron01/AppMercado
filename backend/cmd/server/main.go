@@ -23,6 +23,7 @@ func main() {
 	// 4) Cria Gin Engine e registra rotas/handlers
 	router := gin.Default()
 	handlers.RegisterAuthRoutes(router, authService)
+	handlers.RegisterUserRoutes(router, userService, appConfig)
 
 	// 5) Inicia servidor HTTP na porta configurada
 	router.Run(":" + appConfig.ServerPort)
