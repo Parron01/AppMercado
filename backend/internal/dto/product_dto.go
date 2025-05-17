@@ -2,16 +2,16 @@ package dto
 
 // CreateProductDTO representa os dados para criar um novo produto
 type CreateProductDTO struct {
-	Name         string  `json:"name" binding:"required"`
-	AveragePrice float64 `json:"averagePrice" binding:"omitempty,gte=0"`
-	Barcode      string  `json:"barcode" binding:"omitempty"` // Cliente envia "" para vazio ou omite
+	Name    string `json:"name" binding:"required"`
+	Barcode string `json:"barcode" binding:"omitempty"` // Cliente envia "" para vazio ou omite
+	// AveragePrice não é necessário na criação, será calculado automaticamente
 }
 
 // UpdateProductDTO representa os dados para atualizar um produto existente
 type UpdateProductDTO struct {
 	Name         *string  `json:"name,omitempty"`
-	AveragePrice *float64 `json:"averagePrice,omitempty" binding:"omitempty,gte=0"`
-	Barcode      *string  `json:"barcode,omitempty"` // Cliente pode enviar "", null, ou omitir
+	AveragePrice *float64 `json:"averagePrice,omitempty" binding:"omitempty,gte=0"` // Mantido para permitir ajustes manuais por administradores
+	Barcode      *string  `json:"barcode,omitempty"`                                // Cliente pode enviar "", null, ou omitir
 }
 
 // ProductResponseDTO representa os dados de um produto para resposta HTTP

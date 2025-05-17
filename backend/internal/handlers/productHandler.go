@@ -37,7 +37,11 @@ func RegisterProductRoutes(router *gin.Engine, productService *services.ProductS
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			c.JSON(http.StatusCreated, productService.ToProductResponseDTO(product))
+
+			c.JSON(http.StatusCreated, gin.H{
+				"message": "Produto criado com sucesso. O preço médio será calculado automaticamente com base nas compras.",
+				"product": productService.ToProductResponseDTO(product),
+			})
 		})
 
 		// Rota para buscar um produto específico (qualquer usuário autenticado)

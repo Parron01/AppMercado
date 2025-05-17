@@ -15,24 +15,27 @@ func main() {
 	// 2) Inicializa conexão com DB (PostgreSQL via GORM)
 	database := repositories.NewPostgresConn(appConfig)
 
-	// 3) Instancia repositórios e serviços
+	// 3) Instancia repositórios
 	userRepository := repositories.NewUserRepository(database)
 	categoryRepository := repositories.NewCategoryRepository(database)
 	productRepository := repositories.NewProductRepository(database)
+	purchaseRepository := repositories.NewPurchaseRepository(database)
 
-	// 3) Instancia serviços
+	// 4) Instancia serviços
 	userService := services.NewUserService(userRepository)
 	authService := services.NewAuthService(userService, appConfig)
 	categoryService := services.NewCategoryService(categoryRepository)
 	productService := services.NewProductService(productRepository)
+	purchaseService := services.NewPurchaseService(purchaseRepository, productService)
 
-	// 4) Cria Gin Engine e registra rotas/handlers
+	// 5) Cria Gin Engine e registra rotas/handlers
 	router := gin.Default()
 	handlers.RegisterAuthRoutes(router, authService)
 	handlers.RegisterUserRoutes(router, userService, appConfig)
 	handlers.RegisterCategoryRoutes(router, categoryService, appConfig)
 	handlers.RegisterProductRoutes(router, productService, appConfig)
+	handlers.RegisterPurchaseRoutes(router, purchaseService, appConfig)
 
-	// 5) Inicia servidor HTTP na porta configurada
+	// 6) Inicia servidor HTTP na porta configurada
 	router.Run(":" + appConfig.ServerPort)
 }

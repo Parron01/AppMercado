@@ -40,7 +40,7 @@ func (s *ProductService) CreateProduct(createDTO dto.CreateProductDTO) (*models.
 
 	product := &models.Product{
 		Name:         createDTO.Name,
-		AveragePrice: createDTO.AveragePrice,
+		AveragePrice: 0, // Inicializa com zero - será atualizado com base nas compras futuras
 		Barcode:      barcodeToSave,
 	}
 

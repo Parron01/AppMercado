@@ -31,9 +31,33 @@ services:
       - "5432:5432"
     networks:
       - appmercado-net
+    # Adiciona healthcheck para garantir que o postgres está pronto antes do pgAdmin tentar conectar
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: appmercado-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - appmercado-net
 
 networks:
   appmercado-net:
 
 volumes:
   postgres_data:
+  pgadmin_data:
