@@ -4,10 +4,13 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile  # Produção
-    container_name: appmercado-backend
+      dockerfile: Dockerfile.dev # Using Dockerfile.dev for development
+    container_name: appmercado-backend-dev # Using dev container name
     env_file:
-      - .env  
+      - .env
+    volumes:
+      - .:/app  # Mapeia o código local para o container
+      - /app/bin # Volume anônimo para os binários
     ports:
       - "8080:8080"
     depends_on:

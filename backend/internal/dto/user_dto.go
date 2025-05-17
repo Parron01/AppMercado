@@ -16,8 +16,10 @@ type LoginUserDTO struct {
 
 // UserResponseDTO representa os dados de um usuário para resposta HTTP
 type UserResponseDTO struct {
-	ID    uint   `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Role  string `json:"role"`
+	ID        uint   `json:"id"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	Role      string `json:"role"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }

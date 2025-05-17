@@ -9,7 +9,9 @@ type UpdateCategoryDTO struct {
 }
 
 type CategoryResponseDTO struct {
-	ID     uint   `json:"id"`
-	Name   string `json:"name"`
-	UserID uint   `json:"userId"`
+	ID        uint   `json:"id"`
+	Name      string `json:"name"`
+	UserID    uint   `json:"userId"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }

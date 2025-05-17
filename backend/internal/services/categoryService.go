@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"time"
 
 	"github.com/Parron01/AppMercado/backend/internal/dto"
 	"github.com/Parron01/AppMercado/backend/internal/models"
@@ -96,9 +97,11 @@ func (service *CategoryService) GetAllCategories(userRole string) ([]*models.Cat
 
 func (service *CategoryService) ToCategoryResponseDTO(category *models.Category) dto.CategoryResponseDTO {
 	return dto.CategoryResponseDTO{
-		ID:     category.ID,
-		Name:   category.Name,
-		UserID: category.UserID,
+		ID:        category.ID,
+		Name:      category.Name,
+		UserID:    category.UserID,
+		CreatedAt: category.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: category.UpdatedAt.Format(time.RFC3339),
 	}
 }
 

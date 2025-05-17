@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"time"
 
 	"github.com/Parron01/AppMercado/backend/internal/dto"
 	"github.com/Parron01/AppMercado/backend/internal/models"
@@ -121,9 +122,11 @@ func (service *UserService) VerifyPassword(user *models.User, password string) b
 // ToUserResponseDTO converte um User model para UserResponseDTO
 func (service *UserService) ToUserResponseDTO(user *models.User) dto.UserResponseDTO {
 	return dto.UserResponseDTO{
-		ID:    user.ID,
-		Name:  user.Name,
-		Email: user.Email,
-		Role:  user.Role,
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		Role:      user.Role,
+		CreatedAt: user.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: user.UpdatedAt.Format(time.RFC3339),
 	}
 }
