@@ -121,5 +121,24 @@ func RegisterProductRoutes(router *gin.Engine, productService *services.ProductS
 			}
 			c.JSON(http.StatusOK, gin.H{"message": "Produto deletado com sucesso"})
 		})
+
+		// Rota para buscar estatísticas de preço de um produto
+		productGroup.GET("/:id/statistics", authMw, func(c *gin.Context) {
+			idStr := c.Param("id")
+			id, err := strconv.ParseUint(idStr, 10, 32)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "ID de produto inválido"})
+				return
+			}
+
+			// Obter estatísticas de preço
+			statistics, err := productService.GetProductStatistics(uint(id))
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{"statistics": statistics})
+		})
 	}
 }

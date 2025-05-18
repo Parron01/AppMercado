@@ -16,5 +16,5 @@ type Purchase struct {
 
 	// Relationships
 	Items []PurchaseItem `gorm:"foreignKey:PurchaseID"`
-	Total float64        `gorm:"type:decimal(10,2)"`
+	Total float64        `gorm:"type:decimal(10,4)"` // Aumentado para decimal(10,4)
 }

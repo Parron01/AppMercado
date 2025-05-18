@@ -18,6 +18,6 @@ func NewPostgresConn(config *config.Config) *gorm.DB {
 		panic("failed to connect database: " + error.Error())
 	}
 
-	database.AutoMigrate(&models.User{}, &models.Category{}, &models.Product{}, &models.Purchase{}, &models.PurchaseItem{})
+	database.AutoMigrate(&models.User{}, &models.Category{}, &models.Product{}, &models.Purchase{}, &models.PurchaseItem{}, &models.PriceHistory{})
 	return database
 }

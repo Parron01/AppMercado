@@ -12,12 +12,18 @@ import (
 
 // ProductService define a interface para a lógica de negócios de produtos
 type ProductService struct {
-	productRepo *repositories.ProductRepository
+	productRepo         *repositories.ProductRepository
+	priceHistoryService *PriceHistoryService // Adicionado para acessar estatísticas
 }
 
 // NewProductService cria uma nova instância de ProductService
 func NewProductService(productRepo *repositories.ProductRepository) *ProductService {
 	return &ProductService{productRepo: productRepo}
+}
+
+// SetPriceHistoryService configura o serviço de histórico de preços para evitar dependência circular
+func (s *ProductService) SetPriceHistoryService(priceHistoryService *PriceHistoryService) {
+	s.priceHistoryService = priceHistoryService
 }
 
 // CreateProduct cria um novo produto
@@ -39,9 +45,8 @@ func (s *ProductService) CreateProduct(createDTO dto.CreateProductDTO) (*models.
 	} // Se createDTO.Barcode for "", barcodeToSave permanece nil, resultando em NULL no banco
 
 	product := &models.Product{
-		Name:         createDTO.Name,
-		AveragePrice: 0, // Inicializa com zero - será atualizado com base nas compras futuras
-		Barcode:      barcodeToSave,
+		Name:    createDTO.Name,
+		Barcode: barcodeToSave,
 	}
 
 	if err := s.productRepo.CreateProduct(product); err != nil {
@@ -79,9 +84,6 @@ func (s *ProductService) UpdateProduct(id uint, updateDTO dto.UpdateProductDTO) 
 
 	if updateDTO.Name != nil {
 		product.Name = *updateDTO.Name
-	}
-	if updateDTO.AveragePrice != nil {
-		product.AveragePrice = *updateDTO.AveragePrice
 	}
 
 	// Lógica para atualizar o barcode
@@ -132,15 +134,31 @@ func (s *ProductService) DeleteProduct(id uint) error {
 	return s.productRepo.DeleteProduct(id)
 }
 
+// GetProductStatistics retorna estatísticas de preço de um produto
+func (s *ProductService) GetProductStatistics(productID uint) (*dto.PriceHistoryStatisticsDTO, error) {
+	// Verificar se o serviço de histórico de preços está configurado
+	if s.priceHistoryService == nil {
+		return nil, errors.New("serviço de estatísticas de preço não disponível")
+	}
+
+	// Verificar se produto existe
+	product, err := s.GetProductByID(productID)
+	if err != nil {
+		return nil, errors.New("GetProductStatistics: " + err.Error())
+	}
+
+	// Usar o serviço de histórico de preços para obter as estatísticas
+	return s.priceHistoryService.GetProductPriceStatistics(product.ID)
+}
+
 // ToProductResponseDTO converte um modelo Product para ProductResponseDTO
 func (s *ProductService) ToProductResponseDTO(product *models.Product) dto.ProductResponseDTO {
 	return dto.ProductResponseDTO{
-		ID:           product.ID,
-		Name:         product.Name,
-		AveragePrice: product.AveragePrice,
-		Barcode:      product.Barcode, // product.Barcode é *string, dto.ProductResponseDTO.Barcode é *string
-		CreatedAt:    product.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:    product.UpdatedAt.Format(time.RFC3339),
+		ID:        product.ID,
+		Name:      product.Name,
+		Barcode:   product.Barcode,
+		CreatedAt: product.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: product.UpdatedAt.Format(time.RFC3339),
 	}
 }
 
