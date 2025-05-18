@@ -12,7 +12,8 @@ import (
 
 // UserService encapsula a lógica de negócio relacionada a usuários
 type UserService struct {
-	userRepository *repositories.UserRepository
+	userRepository  *repositories.UserRepository
+	categoryService *CategoryService // Adicionado para criar categorias padrão
 }
 
 // NewUserService cria uma nova instância do serviço de usuários
@@ -20,6 +21,11 @@ func NewUserService(userRepo *repositories.UserRepository) *UserService {
 	return &UserService{
 		userRepository: userRepo,
 	}
+}
+
+// SetCategoryService configura o serviço de categoria para permitir criação de categorias padrão
+func (service *UserService) SetCategoryService(categoryService *CategoryService) {
+	service.categoryService = categoryService
 }
 
 // CreateUser cria um novo usuário com senha criptografada
@@ -63,7 +69,37 @@ func (service *UserService) CreateUser(userDTO dto.CreateUserDTO) (*models.User,
 		return nil, saveError
 	}
 
+	// Criar categorias padrão para o novo usuário
+	if service.categoryService != nil {
+		go service.createDefaultCategories(newUser.ID) // Executa assincronamente para não bloquear resposta
+	}
+
 	return newUser, nil
+}
+
+// createDefaultCategories cria categorias padrão para um novo usuário
+func (service *UserService) createDefaultCategories(userID uint) {
+	// Lista de categorias padrão comuns em supermercados
+	defaultCategories := []string{
+		"Hortifrúti",
+		"Laticínios",
+		"Carnes",
+		"Padaria",
+		"Bebidas",
+		"Higiene",
+		"Limpeza",
+		"Congelados",
+		"Mercearia",
+		"Cereais",
+	}
+
+	for _, categoryName := range defaultCategories {
+		service.categoryService.CreateCategory(dto.CreateCategoryDTO{
+			Name: categoryName,
+		}, userID)
+		// Ignora erros para não interromper a criação das outras categorias
+		// Se uma falhar, as outras ainda são criadas
+	}
 }
 
 // DeleteUser remove um usuário pelo ID (apenas o próprio usuário ou admin)

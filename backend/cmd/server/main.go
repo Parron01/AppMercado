@@ -21,14 +21,20 @@ func main() {
 	productRepository := repositories.NewProductRepository(database)
 	purchaseRepository := repositories.NewPurchaseRepository(database)
 	priceHistoryRepository := repositories.NewPriceHistoryRepository(database)
+	userCategoryProductRepository := repositories.NewUserCategoryProductRepository(database)
 
 	// 4) Instancia serviços
 	userService := services.NewUserService(userRepository)
-	authService := services.NewAuthService(userService, appConfig)
 	categoryService := services.NewCategoryService(categoryRepository)
+
+	// Configura dependência circular entre UserService e CategoryService
+	userService.SetCategoryService(categoryService)
+
+	authService := services.NewAuthService(userService, appConfig)
 	productService := services.NewProductService(productRepository)
 	purchaseService := services.NewPurchaseService(purchaseRepository, productService)
 	priceHistoryService := services.NewPriceHistoryService(priceHistoryRepository, productService, userService)
+	userCategoryProductService := services.NewUserCategoryProductService(userCategoryProductRepository, categoryService, productService)
 
 	// 5) Resolve circular dependencies
 	purchaseService.SetPriceHistoryService(priceHistoryService)
@@ -42,6 +48,7 @@ func main() {
 	handlers.RegisterProductRoutes(router, productService, appConfig)
 	handlers.RegisterPurchaseRoutes(router, purchaseService, appConfig)
 	handlers.RegisterPriceHistoryRoutes(router, priceHistoryService, appConfig)
+	handlers.RegisterUserCategoryProductRoutes(router, userCategoryProductService, appConfig)
 
 	// 7) Inicia servidor HTTP na porta configurada
 	router.Run(":" + appConfig.ServerPort)

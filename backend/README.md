@@ -103,6 +103,7 @@ docker-compose up --build -d
 | CRUD   | `/products`      | Gerenciar produtos         |
 | CRUD   | `/categories`    | Gerenciar categorias       |
 | CRUD   | `/purchases`     | Registrar compras & preços |
+| CRUD   | `/user-category-products` | Gerenciar UserCategoryProduct |
 
 > **Nota:** Endpoints adicionais serão adicionados conforme evoluir o projeto.
 
