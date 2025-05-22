@@ -1,0 +1,18 @@
+FROM node:slim
+WORKDIR /app
+
+# Instalar dependências
+COPY package*.json ./
+RUN npm ci
+
+# Copiar o restante dos arquivos do projeto
+COPY . .
+
+# Criar e definir permissões corretas para o diretório de cache
+RUN mkdir -p /app/.angular/cache && chmod -R 777 /app/.angular
+
+# Expor porta do servidor de desenvolvimento Angular
+EXPOSE 4200
+
+# Iniciar o servidor de desenvolvimento Angular com parâmetros para evitar problemas
+CMD ["npm", "start", "--", "--host", "0.0.0.0", "--disable-host-check", "--poll=2000"]

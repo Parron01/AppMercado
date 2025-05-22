@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: appmercado-frontend-dev
+    volumes:
+      - .:/app:cached
+      - angular_cache:/app/.angular/cache
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    networks:
+      - appmercado-net
+
+networks:
+  appmercado-net:
+    name: backend_appmercado-net
+    external: true
+
+volumes:
+  angular_cache:
