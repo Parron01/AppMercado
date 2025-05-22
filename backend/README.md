@@ -5,7 +5,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14-blue?logo=postgresql)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue?logo=docker)
 
-> Serviço **API RESTful** para gerenciamento de listas de compras, preços e histórico de gastos do projeto **AppMercado**.
+> API RESTful para gerenciamento de listas de compras, produtos, categorias, histórico de preços e relacionamento entre usuários, categorias e produtos.
 
 ---
 
@@ -25,17 +25,18 @@
 ## 📂 Estrutura de Pastas
 
 ```
-appmercado/back-end/
+backend/
 │
 ├── cmd/server/               # ponto de entrada (main.go)
 │
 ├── internal/                 # código privado (não importável fora do módulo)
-│   ├── handlers/             # controllers – HTTP handlers (Auth etc.)
+│   ├── handlers/             # controllers – HTTP handlers (Auth, User, Category, Product, Purchase, PriceHistory, UserCategoryProduct)
 │   ├── services/             # regra de negócio
 │   ├── repositories/         # persistência (PostgreSQL, GORM)
 │   └── models/               # structs refletindo tabelas
 │
 ├── pkg/config/               # utilitários exportáveis (carrega .env via Viper)
+├── pkg/utils/                # funções utilitárias (formatação, etc)
 │
 ├── Dockerfile                # imagem otimizada p/ produção (distroless)
 ├── Dockerfile.dev            # imagem dev com Hot Reload (Air)
@@ -71,12 +72,13 @@ JWT_EXPIRATION_HOURS=72
 
 > **Importante:** O `.env` nunca deve ser versionado. Ele já está no `.gitignore`.
 
+---
+
 ## 🚀 Executando
 
 ### Desenvolvimento (Hot Reload)
 
 ```bash
-# sobe API + PostgreSQL com Air
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
 ```
 
@@ -85,7 +87,6 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
 ### Produção / Teste sem Hot Reload
 
 ```bash
-# build e sobe containers otimizados
 docker-compose up --build -d
 ```
 
@@ -94,26 +95,43 @@ docker-compose up --build -d
 
 ---
 
-## 🗂️ Endpoints Principais (MVP)
+## 🗂️ Endpoints Principais
 
-| Método | Rota             | Descrição                  |
-| ------ | ---------------- | -------------------------- |
-| POST   | `/auth/register` | Registro de usuário        |
-| POST   | `/auth/login`    | Login e emissão de JWT     |
-| CRUD   | `/products`      | Gerenciar produtos         |
-| CRUD   | `/categories`    | Gerenciar categorias       |
-| CRUD   | `/purchases`     | Registrar compras & preços |
-| CRUD   | `/user-category-products` | Gerenciar UserCategoryProduct |
+| Método | Rota             | Descrição                                      |
+| ------ | ---------------- | ---------------------------------------------- |
+| POST   | `/auth/register` | Registro de usuário                            |
+| POST   | `/auth/login`    | Login e emissão de JWT                         |
+| GET    | `/users/all`     | Listar todos os usuários (admin)               |
+| DELETE | `/users/delete/:id` | Deletar usuário (próprio ou admin)           |
+| CRUD   | `/categories`    | Gerenciar categorias do usuário                |
+| CRUD   | `/products`      | Gerenciar produtos (admin)                     |
+| CRUD   | `/purchases`     | Registrar e consultar compras                  |
+| CRUD   | `/price-history` | Consultar histórico de preços                  |
+| CRUD   | `/user-category-products` | Relacionar produtos a categorias do usuário |
 
-> **Nota:** Endpoints adicionais serão adicionados conforme evoluir o projeto.
+> **Nota:** Endpoints adicionais e detalhes de payloads podem ser consultados no código dos handlers.
 
 ---
 
-## 🧪 Testes
+## 🔒 Autenticação & Permissões
 
-```bash
-go test ./...
-```
+- JWT obrigatório para todas as rotas (exceto `/auth/register` e `/auth/login`).
+- Papéis de usuário: `Admin`, `Standard`, `Guest`.
+- Permissões de escrita em produtos são restritas a administradores.
+- Categorias e compras são privadas por usuário.
+- Admin pode listar e gerenciar todos os registros.
+
+---
+
+## 🗃️ Principais Modelos
+
+- **User**: Usuário do sistema, com papel (role).
+- **Category**: Categoria de produtos, associada a um usuário.
+- **Product**: Produto global, gerenciado por admin.
+- **Purchase**: Compra realizada por um usuário, com itens.
+- **PurchaseItem**: Item de uma compra (produto, quantidade, preço).
+- **PriceHistory**: Histórico de preços de produtos por compra.
+- **UserCategoryProduct**: Relação entre usuário, categoria e produto.
 
 ---
 
@@ -121,7 +139,7 @@ go test ./...
 
 1. Faça um fork / crie branch.
 2. Siga o padrão de pastas (`internal/`, `pkg/`).
-3. Execute `go vet` e `go test` antes de submeter PR.
+3. Execute `go vet` antes de submeter PR.
 
 ---
 
