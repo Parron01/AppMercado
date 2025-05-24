@@ -1,4 +1,4 @@
-# ✅ Resumo Completo do Projeto de Gerenciamento de Compras - Definições Até Aqui
+# ✅ Resumo Completo do Projeto de Gerenciamento de Compras - Definições Até Aqui.
 
 ---
 
