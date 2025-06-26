@@ -5,6 +5,7 @@ import (
 	"github.com/Parron01/AppMercado/backend/internal/repositories"
 	"github.com/Parron01/AppMercado/backend/internal/services"
 	"github.com/Parron01/AppMercado/backend/pkg/config"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,6 +43,16 @@ func main() {
 
 	// 6) Cria Gin Engine e registra rotas/handlers
 	router := gin.Default()
+
+	// Configura CORS
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:4200"}, // Substitua pelo domínio do frontend
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
 	handlers.RegisterAuthRoutes(router, authService)
 	handlers.RegisterUserRoutes(router, userService, appConfig)
 	handlers.RegisterCategoryRoutes(router, categoryService, appConfig)
