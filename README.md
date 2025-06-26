@@ -1,4 +1,4 @@
-# ✅ Resumo Completo do Projeto de Gerenciamento de Compras - Definições Até Aqui
+# ✅ Resumo Completo do Projeto de Gerenciamento de Compras - Definições Até Aqui.
 
 ---
 
@@ -14,7 +14,7 @@ Aplicação full-stack com frontend em **Angular (PWA)** e backend em **Go (API 
 
 ## ✅ Frontend (Angular + PWA)
 
-- **SPA (Single Page Application):** Aplicação web com PWA, suportando uso offline.
+- **SPA (Single Page Application):** Aplicação web com PWA, suportando uso offline , oque vai de acordo com a necessidade de uso do aplicativo fora de casa sem conexão por exemplo.
 - **Service Worker:** Controle de cache e atualização dinâmica.
 - **Módulos:**  
   - Lista de Compras  
