@@ -1,0 +1,23 @@
+<div class="home-container">
+  <h1>🛒 Lista de Compras</h1>
+  <form class="add-form" (ngSubmit)="addProduct()" autocomplete="off">
+    <input
+      type="text"
+      placeholder="Produto"
+      [(ngModel)]="newProduct.name"
+      name="name"
+      required
+    />
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <ul class="product-list">
+    <li *ngFor="let product of products">
+      <span class="prod-name">{{ product.name }}</span>
+      <button class="remove-btn" (click)="removeProduct(product.id)" title="Remover">🗑️</button>
+    </li>
+  </ul>
+  <div *ngIf="products.length === 0" class="empty-list">
+    Nenhum produto na lista. Adicione um item!
+  </div>
+</div>
